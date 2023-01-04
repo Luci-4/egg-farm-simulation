@@ -1,8 +1,5 @@
-from typing import Callable
-from random import random
 from numpy import arange
 from multiprocessing import Process
-from ProbabilityContext import ProbabilityContext
 from EggFarm import EggFarm
 from json import load as json_load, decoder
 
@@ -58,10 +55,9 @@ class EggFarmSimulation:
 
     def __init_processes(self, output_fractions_parts, output_fractions_iterations_results) -> list[Process]:
         processes = []
-        for percentages_part in output_fractions_parts:
-            # thread = Thread(target=self.thread_callback, args=(percentages_part, simulation_tries), daemon=True)
-            process = Process(target=self.populate_output_fractions_iterations_results, args=(output_fractions_iterations_results, percentages_part))
-            print("starting for ", percentages_part)
+        for output_fraction_part in output_fractions_parts:
+            process = Process(target=self.populate_output_fractions_iterations_results, args=(output_fractions_iterations_results, output_fraction_part))
+            print("starting for ", output_fraction_part)
             process.start()
             processes.append(process)
         return processes
@@ -77,7 +73,6 @@ class EggFarmSimulation:
         stop = 1
         interval = (stop - start)/self.optimization_interval_count
         potential_output_fractions = arange(start, stop, interval)
-        # percentage_results = [(percentage, self.__average_simulate(percentage,simulation_tries)) for percentage in percentages]
         output_fractions_iterations_results = []
 
         if self.multiprocessing_optimization:
@@ -85,11 +80,11 @@ class EggFarmSimulation:
         else:
             self.populate_output_fractions_iterations_results(output_fractions_iterations_results, potential_output_fractions)
 
-        valid_percentage_results = [i for i in output_fractions_iterations_results if not(i[1] is None)]
+        valid_output_fractions_results = [i for i in output_fractions_iterations_results if not(i[1] is None)]
         
-        optimal_output_fraction, minimal_iteration_count = min(valid_percentage_results, key=lambda x: x[1])                       
-        print("".join([(f"|{p}|\t\t"if p == optimal_output_fraction else f" {p} \t\t") for (p, n) in valid_percentage_results]))
-        print("".join([(f"|{n}|\t\t"if p == optimal_output_fraction else f" {n} \t\t") for (p, n) in valid_percentage_results]))
+        optimal_output_fraction, minimal_iteration_count = min(valid_output_fractions_results, key=lambda x: x[1])                       
+        print("".join([(f"|{p}|\t\t"if p == optimal_output_fraction else f" {p} \t\t") for (p, n) in valid_output_fractions_results]))
+        print("".join([(f"|{n}|\t\t"if p == optimal_output_fraction else f" {n} \t\t") for (p, n) in valid_output_fractions_results]))
         return optimal_output_fraction, minimal_iteration_count
 
         
