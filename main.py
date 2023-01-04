@@ -1,0 +1,12 @@
+from EggFarmSimulation import EggFarmSimulation
+from EggFarm import EggFarm
+
+if __name__ == "__main__":
+    farm = EggFarm(initial_eggs=0, initial_chickens=1, output_fraction=0.8)
+    simulation = EggFarmSimulation(
+        farm=farm,
+        config_file_path="eggfarm/simulation_config.json"
+    )
+    print(simulation.simulate_farm_work_cycle())
+
+    print(simulation.optimize())

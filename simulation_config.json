@@ -1,0 +1,8 @@
+{
+    "output_egg_number_goal": 10,
+    "iteration_n_limit": 500000,
+    "multiprocessed_optimization": true,
+    "optimization_interval_count": 100,
+    "iterations_per_process": 10,
+    "simulation_sample": 50
+}
