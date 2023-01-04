@@ -1,6 +1,6 @@
 from json import load as json_load, decoder
 from numpy import arange
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 
 from EggFarmSimulation import EggFarmSimulation
 from OptimizationResult import OptimizationResult
@@ -60,7 +60,9 @@ class Optimizer:
         output_fractions_iterations_results: list[OptimizationResult] = []
 
         if self.multiprocessing_optimization:
-            self.__optimize_with_multiprocessing(output_fractions_iterations_results, potential_output_fractions)
+            shared_list = Manager().list()
+            self.__optimize_with_multiprocessing(shared_list, potential_output_fractions)
+            output_fractions_iterations_results = shared_list
         else:
             self.populate_output_fractions_iterations_results(output_fractions_iterations_results, potential_output_fractions)
 

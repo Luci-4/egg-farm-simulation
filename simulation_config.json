@@ -1,5 +1,5 @@
 {
     "output_egg_number_goal": 10,
     "iteration_n_limit": 500000,
-    "simulation_sample": 50
+    "simulation_sample": 1
 }
