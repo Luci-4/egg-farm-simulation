@@ -1,0 +1,5 @@
+{
+    "multiprocessed_optimization": true,
+    "optimization_interval_count": 100,
+    "iterations_per_process": 10
+}

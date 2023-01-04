@@ -1,4 +1,5 @@
 from EggFarmSimulation import EggFarmSimulation
+from Optimizer import Optimizer
 from EggFarm import EggFarm
 
 if __name__ == "__main__":
@@ -9,4 +10,8 @@ if __name__ == "__main__":
     )
     print(simulation.simulate_farm_work_cycle())
 
-    print(simulation.optimize())
+    optimizer = Optimizer(
+        egg_farm_simulation=simulation, 
+        config_file_path="optimization_config.json"
+    )
+    print(optimizer.optimize())
