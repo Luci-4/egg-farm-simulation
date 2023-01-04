@@ -1,6 +1,7 @@
 from numpy import arange
 from multiprocessing import Process
 from EggFarm import EggFarm
+from OptimizationResult import OptimizationResult
 from json import load as json_load, decoder
 
 class EggFarmSimulation:
@@ -38,13 +39,14 @@ class EggFarmSimulation:
             sum += iterations
         return sum/self.simulation_sample
 
-    def populate_output_fractions_iterations_results(self, output_fractions_iterations, output_fractions):
+    def populate_output_fractions_iterations_results(self, output_fractions_iterations_results: list[OptimizationResult], output_fractions: list[float]) -> None:
         for output_fraction in output_fractions:
             average_iteration_count = self.__calculate_average_simulation_iteration_number(output_fraction)
-            output_fractions_iterations.append((output_fraction, average_iteration_count))
+            result = OptimizationResult(output_fraction, average_iteration_count)
+            output_fractions_iterations_results.append(result)
             print("\tfinished", output_fraction, average_iteration_count)
 
-    def __split_output_fractions_to_parts(self, potential_output_fractions) -> list[list[float]]:
+    def __split_output_fractions_to_parts(self, potential_output_fractions: list[tuple]) -> list[list[float]]:
         split_points = range(0, len(list(potential_output_fractions)), self.iterations_per_process)
         return [list(potential_output_fractions)[i:i+self.iterations_per_process] for i in split_points]
 
@@ -53,7 +55,7 @@ class EggFarmSimulation:
         while any([process.is_alive() for process in processes]):
             pass
 
-    def __init_processes(self, output_fractions_parts, output_fractions_iterations_results) -> list[Process]:
+    def __init_processes(self, output_fractions_parts: list[list[float]], output_fractions_iterations_results: list[OptimizationResult]) -> list[Process]:
         processes = []
         for output_fraction_part in output_fractions_parts:
             process = Process(target=self.populate_output_fractions_iterations_results, args=(output_fractions_iterations_results, output_fraction_part))
@@ -62,33 +64,33 @@ class EggFarmSimulation:
             processes.append(process)
         return processes
 
-    def __optimize_with_multiprocessing(self, output_fractions_iterations_results, potential_output_fractions):
+    def __optimize_with_multiprocessing(self, output_fractions_iterations_results: list[OptimizationResult], potential_output_fractions: list[float]) -> None:
         output_fractions_parts = self.__split_output_fractions_to_parts(potential_output_fractions)
         processes = self.__init_processes(output_fractions_parts, output_fractions_iterations_results)
         self.__wait_for_all_processes(processes)        
 
 
-    def optimize(self):
+    def optimize(self) -> OptimizationResult:
         start = 0
         stop = 1
         interval = (stop - start)/self.optimization_interval_count
         potential_output_fractions = arange(start, stop, interval)
-        output_fractions_iterations_results = []
+        output_fractions_iterations_results: list[OptimizationResult] = []
 
         if self.multiprocessing_optimization:
             self.__optimize_with_multiprocessing(output_fractions_iterations_results, potential_output_fractions)
         else:
             self.populate_output_fractions_iterations_results(output_fractions_iterations_results, potential_output_fractions)
 
-        valid_output_fractions_results = [i for i in output_fractions_iterations_results if not(i[1] is None)]
+        valid_output_fractions_results = [i for i in output_fractions_iterations_results if not(i.iteration_count is None)]
         
-        optimal_output_fraction, minimal_iteration_count = min(valid_output_fractions_results, key=lambda x: x[1])                       
-        print("".join([(f"|{p}|\t\t"if p == optimal_output_fraction else f" {p} \t\t") for (p, n) in valid_output_fractions_results]))
-        print("".join([(f"|{n}|\t\t"if p == optimal_output_fraction else f" {n} \t\t") for (p, n) in valid_output_fractions_results]))
-        return optimal_output_fraction, minimal_iteration_count
+        optimal_result = min(valid_output_fractions_results, key=lambda x: x.iteration_count)                       
+        print("".join([(f"|{r.output_fraction}|\t\t"if r.output_fraction == optimal_result.output_fraction else f" {r.output_fraction} \t\t") for r in valid_output_fractions_results]))
+        print("".join([(f"|{r.iteration_count}|\t\t"if r.output_fraction == optimal_result.output_fraction else f" {r.iteration_count} \t\t") for r in valid_output_fractions_results]))
+        return optimal_result
 
         
-    def simulate_farm_work_cycle(self):
+    def simulate_farm_work_cycle(self) -> int | None:
         for n_iteration in range(1, self.iteration_n_limit+1):
             self.farm.tick(n_iteration)
 

@@ -5,7 +5,7 @@ if __name__ == "__main__":
     farm = EggFarm(initial_eggs=0, initial_chickens=1, output_fraction=0.8)
     simulation = EggFarmSimulation(
         farm=farm,
-        config_file_path="eggfarm/simulation_config.json"
+        config_file_path="simulation_config.json"
     )
     print(simulation.simulate_farm_work_cycle())
 
