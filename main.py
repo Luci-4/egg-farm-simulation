@@ -8,7 +8,6 @@ if __name__ == "__main__":
         farm=farm,
         config_file_path="simulation_config.json"
     )
-    print(simulation.simulate_farm_work_cycle())
 
     optimizer = Optimizer(
         egg_farm_simulation=simulation, 

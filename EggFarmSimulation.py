@@ -1,6 +1,7 @@
 from EggFarm import EggFarm
 from OptimizationResult import OptimizationResult
 from json import load as json_load, decoder
+from EggGoalNotReachedError import EggGoalNotReachedError
 
 class EggFarmSimulation:
 
@@ -21,24 +22,21 @@ class EggFarmSimulation:
         self.iteration_n_limit = config_data["iteration_n_limit"]
         self.simulation_sample = config_data["simulation_sample"]
 
-    def calculate_average_simulation_iteration_number(self, output_fraction: float) -> float:
+    def try_to_get_average_iterations_to_reach_egg_goal(self, output_fraction: float) -> float:
         sum = 0
         self.farm.output_fraction = output_fraction
 
-        for i in range(self.simulation_sample):
+        for _ in range(self.simulation_sample):
             self.farm.reset()
-            result = self.simulate_farm_work_cycle()
-            if result is None:
-                return
-            iterations = result
+            iterations = self.__try_to_get_iterations_to_reach_egg_goal()
             sum += iterations
         return sum/self.simulation_sample
 
-        
-    def simulate_farm_work_cycle(self) -> int | None:
+    def __try_to_get_iterations_to_reach_egg_goal(self) -> int:
         for n_iteration in range(1, self.iteration_n_limit+1):
             self.farm.tick(n_iteration)
 
             if self.farm.output_eggs >= self.output_egg_number_goal:
                 return n_iteration
 
+        raise EggGoalNotReachedError(self.iteration_n_limit)

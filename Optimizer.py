@@ -4,6 +4,7 @@ from multiprocessing import Process, Manager
 
 from EggFarmSimulation import EggFarmSimulation
 from OptimizationResult import OptimizationResult
+from EggGoalNotReachedError import EggGoalNotReachedError
 
 class Optimizer:
     def __init__(self, egg_farm_simulation: EggFarmSimulation, config_file_path: str) -> None:
@@ -27,10 +28,14 @@ class Optimizer:
 
     def populate_output_fractions_iterations_results(self, output_fractions_iterations_results: list[OptimizationResult], output_fractions: list[float]) -> None:
         for output_fraction in output_fractions:
-            average_iteration_count = self.egg_farm_simulation.calculate_average_simulation_iteration_number(output_fraction)
-            result = OptimizationResult(output_fraction, average_iteration_count)
-            output_fractions_iterations_results.append(result)
-            print("\tfinished", output_fraction, average_iteration_count)
+            try:
+                average_iteration_count = self.egg_farm_simulation.try_to_get_average_iterations_to_reach_egg_goal(output_fraction)
+            except EggGoalNotReachedError:
+                continue
+            else:
+                result = OptimizationResult(output_fraction, average_iteration_count)
+                output_fractions_iterations_results.append(result)
+                print("\tfinished", output_fraction, average_iteration_count)
 
     def __init_processes(self, output_fractions_parts: list[list[float]], output_fractions_iterations_results: list[OptimizationResult]) -> list[Process]:
         processes = []
