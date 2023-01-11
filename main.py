@@ -1,6 +1,6 @@
-from EggFarmSimulation import EggFarmSimulation
-from Optimizer import Optimizer
-from EggFarm import EggFarm
+from egg_farm_simulation import EggFarmSimulation
+from optimizer import Optimizer
+from egg_farm import EggFarm
 
 if __name__ == "__main__":
     farm = EggFarm(initial_eggs=0, initial_chickens=1, output_fraction=0.8)

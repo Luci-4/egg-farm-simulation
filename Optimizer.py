@@ -2,9 +2,9 @@ from json import load as json_load, decoder
 from numpy import arange
 from multiprocessing import Process, Manager
 
-from EggFarmSimulation import EggFarmSimulation
-from OptimizationResult import OptimizationResult
-from EggGoalNotReachedError import EggGoalNotReachedError
+from egg_farm_simulation import EggFarmSimulation
+from optimization_result import OptimizationResult
+from egg_goal_not_reached_error import EggGoalNotReachedError
 
 class Optimizer:
     def __init__(self, egg_farm_simulation: EggFarmSimulation, config_file_path: str) -> None:
