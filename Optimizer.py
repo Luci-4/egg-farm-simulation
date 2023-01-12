@@ -70,10 +70,8 @@ class Optimizer:
             output_fractions_iterations_results = shared_list
         else:
             self.populate_output_fractions_iterations_results(output_fractions_iterations_results, potential_output_fractions)
-
-        valid_output_fractions_results = [i for i in output_fractions_iterations_results if not(i.iteration_count is None)]
         
-        optimal_result = min(valid_output_fractions_results, key=lambda x: x.iteration_count)                       
-        print("".join([(f"|{r.output_fraction}|\t\t"if r.output_fraction == optimal_result.output_fraction else f" {r.output_fraction} \t\t") for r in valid_output_fractions_results]))
-        print("".join([(f"|{r.iteration_count}|\t\t"if r.output_fraction == optimal_result.output_fraction else f" {r.iteration_count} \t\t") for r in valid_output_fractions_results]))
+        optimal_result = min(output_fractions_iterations_results, key=lambda x: x.iteration_count)                       
+        print("".join([(f"|{r.output_fraction}|\t\t"if r.output_fraction == optimal_result.output_fraction else f" {r.output_fraction} \t\t") for r in output_fractions_iterations_results]))
+        print("".join([(f"|{r.iteration_count}|\t\t"if r.output_fraction == optimal_result.output_fraction else f" {r.iteration_count} \t\t") for r in output_fractions_iterations_results]))
         return optimal_result
