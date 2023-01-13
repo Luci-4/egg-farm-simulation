@@ -4,6 +4,8 @@ class EggFarmState:
         self.__initial_chickens = initial_chickens
         self.__eggs = initial_eggs
         self.__chickens = initial_chickens
+    def __repr__(self) -> str:
+        return f"{self.__eggs=} | {self.__chickens = }"
 
     @property
     def eggs(self):

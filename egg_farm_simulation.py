@@ -1,6 +1,7 @@
 from egg_farm import EggFarm
 from json import load as json_load, decoder
 from egg_goal_not_reached_error import EggGoalNotReachedError
+from time import time
 
 class EggFarmSimulation:
 
@@ -17,25 +18,23 @@ class EggFarmSimulation:
             self.__init_fields_from_config_data(config_data)
 
     def __init_fields_from_config_data(self, config_data: dict[str, any]) -> None:
-        self.output_egg_number_goal = config_data["output_egg_number_goal"]
-        self.iteration_n_limit = config_data["iteration_n_limit"]
-        self.simulation_sample = config_data["simulation_sample"]
+        self.duration_in_seconds = config_data["duration_in_seconds"]
 
-    def try_to_get_average_iterations_to_reach_egg_goal(self, output_fraction: float) -> float:
-        sum = 0
-        self.farm.output_fraction = output_fraction
+    def set_output_fraction(self, value: float) -> None:
+        self.farm.output_fraction = value
 
-        for _ in range(self.simulation_sample):
-            self.farm.reset()
-            iterations = self.__try_to_get_iterations_to_reach_egg_goal()
-            sum += iterations
-        return sum/self.simulation_sample
+    def reset_initial_state(self) -> None:
+        self.farm.reset()
 
-    def __try_to_get_iterations_to_reach_egg_goal(self) -> int:
-        for n_iteration in range(1, self.iteration_n_limit+1):
+    def get_output_eggs_after_duration_time_elapsed(self) -> int:
+        start_time = time()
+        n_iteration = 1
+        last_printed_values = (None, None) 
+        while time() - start_time < self.duration_in_seconds:
             self.farm.tick(n_iteration)
-
-            if self.farm.output_eggs >= self.output_egg_number_goal:
-                return n_iteration
-
-        raise EggGoalNotReachedError(self.iteration_n_limit)
+            if (self.farm.output_eggs, self.farm.chickens) != last_printed_values:
+                print(self.farm.output_eggs, self.farm.chickens, n_iteration)
+            last_printed_values = (self.farm.output_eggs, self.farm.chickens)
+            n_iteration += 1
+        # print(n_iteration)
+        return self.farm.output_eggs

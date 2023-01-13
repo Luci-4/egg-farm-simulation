@@ -26,5 +26,9 @@ class EggFarm:
     def tick(self, iteration: int):
         new_output_eggs, new_chatching_eggs = self.__get_new_output_and_chatching_eggs(iteration)
         new_chickens= sum([int(ProbabilityContext.did_chatch_from_egg()) for _ in range(new_chatching_eggs)])
+        # print(self.farm.output_eggs, self.farm.chickens)
+        # print(new_chickens/max(1, new_chatching_eggs))
+        # print(f"{new_chickens=}")
         self.__state.add_eggs(new_output_eggs)
         self.__state.add_chickens(new_chickens)
+        # print(self.__state)
