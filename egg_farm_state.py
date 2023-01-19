@@ -1,9 +1,9 @@
 class EggFarmState:
-    def __init__(self, initial_eggs: int, initial_chickens: int) -> None:
-        self.__initial_eggs = initial_eggs
+    def __init__(self, initial_chickens: int) -> None:
         self.__initial_chickens = initial_chickens
-        self.__eggs = initial_eggs
+        self.__eggs = 0
         self.__chickens = initial_chickens
+
     def __repr__(self) -> str:
         return f"{self.__eggs=} | {self.__chickens = }"
 
@@ -16,7 +16,7 @@ class EggFarmState:
         return self.__chickens
 
     def reset_to_initial_values(self):
-        self.__eggs = self.__initial_eggs
+        self.__eggs = 0
         self.__chickens = self.__initial_chickens
 
     def add_eggs(self, new_eggs: int) -> None:

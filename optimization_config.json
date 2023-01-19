@@ -1,5 +1,8 @@
 {
     "multiprocessed_optimization": true,
-    "optimization_interval_count": 100,
-    "iterations_per_process": 10
+    "optimization_interval_count": 10,
+    "iterations_per_process": 1,
+    "simulation_sample": 10,
+    "max_initial_chickens": 100,
+    "min_initial_chickens": 1
 }
